@@ -7,9 +7,9 @@
 
 public Plugin myinfo =
 {
-	name = "Basecomm Retry manager",
+	name = "Basecomm Retry Manager",
 	author = "Ilusion9",
-	description = "Simple plugin that keeps players gagged/muted on retry",
+	description = "Simple plugin that keeps players gagged or/and muted on retry",
 	version = "1.0",
 	url = "https://github.com/Ilusion9/"
 };
