@@ -17,7 +17,6 @@ public Plugin myinfo =
 #define BASECOMM_NORMAL		0
 #define BASECOMM_GAGGED		1
 #define BASECOMM_MUTED		2
-#define BASECOMM_SILENCED	3
 
 StringMap g_Map_BaseComm;
 
@@ -44,12 +43,12 @@ public void OnClientDisconnect(int client)
 	
 	if (BaseComm_IsClientGagged(client))
 	{
-		value += BASECOMM_GAGGED;
+		value |= BASECOMM_GAGGED;
 	}
 	
 	if (BaseComm_IsClientMuted(client))
 	{
-		value += BASECOMM_MUTED;
+		value |= BASECOMM_MUTED;
 	}
 	
 	if (value != BASECOMM_NORMAL)
@@ -74,23 +73,14 @@ public void OnClientPostAdminCheck(int client)
 		return;
 	}
 	
-	switch (value)
+	if (value & BASECOMM_GAGGED)
 	{
-		case BASECOMM_GAGGED:
-		{
-			BaseComm_SetClientGag(client, true);	
-		}
-		
-		case BASECOMM_MUTED:
-		{
-			BaseComm_SetClientMute(client, true);
-		}
-		
-		case BASECOMM_SILENCED:
-		{
-			BaseComm_SetClientGag(client, true);
-			BaseComm_SetClientMute(client, true);
-		}
+		BaseComm_SetClientGag(client, true);	
+	}
+	
+	if (value & BASECOMM_MUTED)
+	{
+		BaseComm_SetClientMute(client, true);	
 	}
 	
 	g_Map_BaseComm.Remove(steamId);
