@@ -21,6 +21,7 @@ StringMap g_Map_BaseComm;
 
 public void OnPluginStart()
 {
+	/* Store the clients BASECOMM flags in a StringMap */
 	g_Map_BaseComm = new StringMap();
 }
 
