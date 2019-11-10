@@ -14,8 +14,6 @@ public Plugin myinfo =
 	url = "https://github.com/Ilusion9/"
 };
 
-/* Define our BASECOMM flags */
-#define BASECOMM_NORMAL		0
 #define BASECOMM_GAGGED		1
 #define BASECOMM_MUTED		2
 
@@ -28,71 +26,65 @@ public void OnPluginStart()
 
 public void OnMapStart()
 {
-	/* Clear all info on map start */
 	g_Map_BaseComm.Clear();
 }
 
 public void OnClientDisconnect(int client)
 {
+	/* Get client's steamid */
 	char steamId[64];
-	
-	/* Get the client's steamid and check if it's valid */
 	if (!GetClientAuthId(client, AuthId_Steam2, steamId, sizeof(steamId)))
 	{
-		return;
+		return; // invalid steamid
 	}
 	
-	int value = BASECOMM_NORMAL;
-	
-	/* If the client is gagged, add the BASECOMM_GAGGED flag to his BASECOMM flags */
+	/* Set client's BASECOMM flags on disconnecting */
+	int flags = 0;
 	if (BaseComm_IsClientGagged(client))
 	{
-		value |= BASECOMM_GAGGED;
+		flags |= BASECOMM_GAGGED; // add this flag if the client's gagged
 	}
 	
-	/* If the client is muted, add the BASECOMM_MUTED flag to his BASECOMM flags */
 	if (BaseComm_IsClientMuted(client))
 	{
-		value |= BASECOMM_MUTED;
+		flags |= BASECOMM_MUTED; // add this flag if the client's muted
 	}
 	
-	/* Store the client's BASECOMM flags */
-	if (value != BASECOMM_NORMAL)
+	/* Store client's flags */
+	if (flags)
 	{
-		g_Map_BaseComm.SetValue(steamId, value);
+		g_Map_BaseComm.SetValue(steamId, flags);
 	}
 }
 
 public void OnClientPostAdminCheck(int client)
 {
+	/* Get client's steamid */
 	char steamId[64];
-	
-	/* Get the client's steamid and check if it's valid */
 	if (!GetClientAuthId(client, AuthId_Steam2, steamId, sizeof(steamId)))
 	{
-		return;
+		return; // invalid steamid
 	}
 	
-	int value = BASECOMM_NORMAL;
-	
-	/* Check the state of this client when he left the server - get our BASECOMM flags */
-	if (!g_Map_BaseComm.GetValue(steamId, value))
+	/* Get client's BASECOMM flags on connect */
+	int flags = 0;
+	if (!g_Map_BaseComm.GetValue(steamId, flags))
 	{
-		return;
+		return; // the client has no BASECOMM flags stored
 	}
 	
-	/* If the client was gagged, gag him */
-	if (value & BASECOMM_GAGGED)
+	/* Check if the client was gagged on his last session */
+	if (flags & BASECOMM_GAGGED)
 	{
 		BaseComm_SetClientGag(client, true);	
 	}
 	
-	/* If the client was muted, mute him */
-	if (value & BASECOMM_MUTED)
+	/* Check if the client was muted on his last session */
+	if (flags & BASECOMM_MUTED)
 	{
 		BaseComm_SetClientMute(client, true);	
 	}
 	
-	/* Remove the client's flags */
+	/* Remove the client's BASECOMM flags */
 	g_Map_BaseComm.Remove(steamId);
 }
