@@ -10,10 +10,11 @@ public Plugin myinfo =
 	name = "Basecomm Retry Manager",
 	author = "Ilusion9",
 	description = "Simple plugin that keeps players gagged or/and muted on retry",
-	version = "1.0",
+	version = "1.1",
 	url = "https://github.com/Ilusion9/"
 };
 
+/* Basecomm flags */
 #define BASECOMM_GAGGED		1
 #define BASECOMM_MUTED		2
 
@@ -21,12 +22,13 @@ StringMap g_Map_BaseComm;
 
 public void OnPluginStart()
 {
-	/* Store the clients BASECOMM flags in a StringMap */
+	/* Store the clients flags in a StringMap */
 	g_Map_BaseComm = new StringMap();
 }
 
 public void OnMapStart()
 {
+	/* Clear all stored flags on map start */
 	g_Map_BaseComm.Clear();
 }
 
@@ -39,7 +41,7 @@ public void OnClientDisconnect(int client)
 		return; // invalid steamid
 	}
 	
-	/* Set client's BASECOMM flags on disconnecting */
+	/* Set client's flags on disconnecting */
 	int flags = 0;
 	if (BaseComm_IsClientGagged(client))
 	{
@@ -51,7 +53,7 @@ public void OnClientDisconnect(int client)
 		flags |= BASECOMM_MUTED; // add this flag if the client's muted
 	}
 	
-	/* Store client's flags */
+	/* Store the client's flags in our StringMap */
 	if (flags)
 	{
 		g_Map_BaseComm.SetValue(steamId, flags);
@@ -67,25 +69,25 @@ public void OnClientPostAdminCheck(int client)
 		return; // invalid steamid
 	}
 	
-	/* Get client's BASECOMM flags on connect */
+	/* Get the client's flags from our StringMap */
 	int flags = 0;
 	if (!g_Map_BaseComm.GetValue(steamId, flags))
 	{
-		return; // the client has no BASECOMM flags stored
+		return; // the client has no flags stored
 	}
 	
-	/* Check if the client was gagged on his last session */
+	/* Check if the client has the BASECOMM_GAGGED flag */
 	if (flags & BASECOMM_GAGGED)
 	{
-		BaseComm_SetClientGag(client, true);	
+		BaseComm_SetClientGag(client, true);
 	}
 	
-	/* Check if the client was muted on his last session */
+	/* Check if the client has the BASECOMM_MUTED flag */
 	if (flags & BASECOMM_MUTED)
 	{
-		BaseComm_SetClientMute(client, true);	
+		BaseComm_SetClientMute(client, true);
 	}
 	
-	/* Remove the client's BASECOMM flags */
+	/* Remove the client's flags from our StringMap */
 	g_Map_BaseComm.Remove(steamId);
 }
