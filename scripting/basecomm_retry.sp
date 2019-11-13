@@ -14,7 +14,7 @@ public Plugin myinfo =
 	url = "https://github.com/Ilusion9/"
 };
 
-/* Define our basecomm flags */
+/* Define the basecomm flags */
 #define BASECOMM_GAGGED		1
 #define BASECOMM_MUTED		2
 
