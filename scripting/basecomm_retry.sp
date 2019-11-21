@@ -1,6 +1,4 @@
 #include <sourcemod>
-#include <sdkhooks>
-#include <sdktools>
 #include <basecomm>
 
 #pragma newdecls required
@@ -37,7 +35,7 @@ public void OnClientDisconnect(int client)
 		return;
 	}
 	
-	int flags = 0;
+	int flags;
 	if (BaseComm_IsClientGagged(client))
 	{
 		flags |= BASECOMM_GAGGED;
@@ -62,7 +60,7 @@ public void OnClientPostAdminCheck(int client)
 		return;
 	}
 	
-	int flags = 0;
+	int flags;
 	if (!g_Map_BaseComm.GetValue(steamId, flags))
 	{
 		return;
